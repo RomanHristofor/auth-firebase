@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {BASE_URL} from "./LoginForm";
+import { AuthResponse } from "../types";
+import { useAuth } from "../hooks/useAuth";
 import './LoginForm.css';
 
 const RegisterForm: React.FC = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+
     const navigate = useNavigate();
+    const { handleRegister } = useAuth();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -18,22 +21,13 @@ const RegisterForm: React.FC = () => {
             return;
         }
 
-        try {
-            const response = await fetch(`${BASE_URL}/register`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
-            });
+        const { message }: AuthResponse = await handleRegister({ email, password });
+        if (message) {
+            setError(message);
 
-            if (response.ok) {
-                const data = await response.json();
+            if (!message.includes('Error')) {
                 navigate('/');
-            } else {
-                const errorData = await response.json();
-                setError(errorData.message || 'Failed to register');
             }
-        } catch (err) {
-            setError('Network error');
         }
     };
 

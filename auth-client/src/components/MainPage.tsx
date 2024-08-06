@@ -1,59 +1,34 @@
 import React, {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
-import {BASE_URL} from "./LoginForm";
+import { logout } from "../services/authApi";
+import { useAuth } from "../hooks/useAuth";
 import './MainPage.css';
 
 
-export const logout = async () => {
-    try {
-        await fetch(`${BASE_URL}/logout`, {
-            method: 'POST',
-            credentials: 'include'
-        });
-
-        sessionStorage.removeItem('token');
-    } catch (error) {
-        console.error('Error logging out:', error);
-    }
-};
+const TIME = 5 * 60;
 
 const MainPage: React.FC = () => {
     const navigate = useNavigate();
-    const [countdown, setCountdown] = useState(5 * 60);
+    const [countdown, setCountdown] = useState(TIME);
+
+    const { handleRefreshToken } = useAuth();
 
     const handleLogout = async () => {
-        try {
-            await logout();
-            navigate('/');
-        } catch (error) {
-            console.error('Error logging out:', error);
-        }
+        await logout();
+        navigate('/');
     };
 
     const refreshAccessToken = async () => {
-        try {
-            const response = await fetch(`${BASE_URL}/refresh-token`, {
-                method: 'POST',
-                credentials: 'include',
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                sessionStorage.setItem('token', data.accessToken);
-            } else {
-                throw new Error('Failed to refresh token');
-            }
-        } catch (error) {
-            console.error('Error refreshing token:', error);
+        const response = await handleRefreshToken();
+        if (response?.message) {
             handleLogout();
         }
     };
 
     useEffect(() => {
-        const interval = setInterval(refreshAccessToken, 2.5 * 60 * 1000);
+        const interval = setInterval(refreshAccessToken, (TIME / 2) * 1000);
         return () => clearInterval(interval);
     }, []);
-
 
     useEffect(() => {
         const interval = setInterval(() => {

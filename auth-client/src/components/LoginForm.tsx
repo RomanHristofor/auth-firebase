@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import './LoginForm.css';
-
-export const BASE_URL = 'http://localhost:5001';
+import { AuthResponse } from "../types";
+import { useAuth } from "../hooks/useAuth";
 
 const LoginForm: React.FC = () => {
     const [email, setEmail] = useState('');
@@ -11,6 +11,7 @@ const LoginForm: React.FC = () => {
     const [error, setError] = useState('');
 
     const navigate = useNavigate();
+    const { handleLogin } = useAuth();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -21,25 +22,11 @@ const LoginForm: React.FC = () => {
             return;
         }
 
-        try {
-            const response = await fetch(`${BASE_URL}/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({ email, password })
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                sessionStorage.setItem('token', data.accessToken);
-                navigate('/main');
-            } else {
-                const errorData = await response.json();
-                setError(errorData.message || 'Failed to log in');
-            }
-        } catch (err) {
-            console.error('Error:', err);
-            setError('Network error');
+        const { message }: AuthResponse = await handleLogin({ email, password });
+        if (message) {
+            setError(message || 'Failed to log in');
+        } else {
+            navigate('/main');
         }
     };
 

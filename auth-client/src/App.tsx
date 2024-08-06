@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { jwtDecode } from 'jwt-decode';
 import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
-import MainPage, {logout} from './components/MainPage';
+import MainPage from './components/MainPage';
+import { logout } from './services/authApi';
 
 
 const isTokenExpired = (token: string) => {
