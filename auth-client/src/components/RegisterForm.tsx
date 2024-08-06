@@ -25,7 +25,7 @@ const RegisterForm: React.FC = () => {
         if (message) {
             setError(message);
 
-            if (!message.includes('Error')) {
+            if (message !== 'User already exists' && !message.includes('Error')) {
                 navigate('/');
             }
         }
