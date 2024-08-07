@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/mockServer.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/mockServer.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/api/mockServer.js"
+    }
+  ]
+}
