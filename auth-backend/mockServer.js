@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 5001;
 
 app.use(cookieParser());
 app.use(cors({
-    origin: ['http://localhost:3000', 'https://auth-firebase-9oggwnt5r-romans-projects-cc7e9ae5.vercel.app'],
+    origin: ['http://localhost:3000', 'https://auth-client-five.vercel.app'],
     credentials: true
 }));
 app.use(express.json());
