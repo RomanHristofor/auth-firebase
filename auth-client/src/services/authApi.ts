@@ -1,6 +1,6 @@
 import { AuthCredentials, AuthResponse } from '../types';
 
-export const BASE_URL = 'https://9c6f-46-53-252-46.ngrok-free.app';
+export const BASE_URL = 'http://localhost:5001';
 
 const setToken = (token: string) => {
     sessionStorage.setItem('token', token);
